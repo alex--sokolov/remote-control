@@ -28,5 +28,7 @@ export const commander = async (action: string, payload:string[]):Promise<void |
       return drawCircle(x, y, coords[0]);
     case 'draw_rectangle':
       return drawRectangle(x, y, coords[0], coords[1]);
+    case 'draw_square':
+      return drawRectangle(x, y, coords[0], coords[0]);
   }
 }
