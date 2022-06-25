@@ -1,5 +1,10 @@
 import robot from 'robotjs'
 import {drawCircle, drawRectangle} from "./draw";
+import {prntScrn} from "./prntScrn";
+
+const PRINTSCREEN_WIDTH = 100;
+const PRINTSCREEN_HEIGHT = 100;
+
 
 export const commander = async (action: string, payload:string[]):Promise<void | string> => {
   const { x, y } = robot.getMousePos();
@@ -30,5 +35,7 @@ export const commander = async (action: string, payload:string[]):Promise<void |
       return drawRectangle(x, y, coords[0], coords[1]);
     case 'draw_square':
       return drawRectangle(x, y, coords[0], coords[0]);
+    case 'prnt_scrn':
+      return prntScrn(x, y, PRINTSCREEN_WIDTH, PRINTSCREEN_HEIGHT);
   }
 }
