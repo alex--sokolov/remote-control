@@ -13,10 +13,14 @@ export const startWebSocketServer = (port: number) => {
   const wss = new WebSocketServer({port: port});
   wss.on('connection', function connection(ws: ExtWebSocket): void {
     ws.on('message', function message(data) {
-      console.log('received: %s', data);
+      console.log('received:', data.toString());
     });
 
-    ws.send('something');
+    ws.send('server_started', (err) => {
+      if (err){
+        console.error(`Smth went wrong. Error: ${err.message}`)
+      }
+    });
 
     ws.isAlive = true;
     ws.on('pong', () => {
@@ -34,7 +38,6 @@ export const startWebSocketServer = (port: number) => {
       const [action, ...payload] = data.split(' ');
 
       const result = await commander(action, payload);
-      console.log('-------');
       console.log('Result');
       console.log('-------');
       console.log(result);
@@ -42,19 +45,23 @@ export const startWebSocketServer = (port: number) => {
       myStream.write(`${action} ${result}\0`)
     });
 
-    const interval = setInterval(() => {
-      wss.clients.forEach((ws: WebSocket) => {
-        const extWs = ws as ExtWebSocket;
+    ws.on('close', () => {
+      myStream.destroy()
+    })
 
-        if (!extWs.isAlive) return ws.terminate();
+  });
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws: WebSocket) => {
+      const extWs = ws as ExtWebSocket;
 
-        extWs.isAlive = false;
-        ws.ping(null, undefined);
-        console.log('Ping')
-      });
-    }, 30000);
-    wss.on('close', function close() {
-      clearInterval(interval);
+      if (!extWs.isAlive) return ws.terminate();
+
+      extWs.isAlive = false;
+      ws.ping(null, undefined);
+      console.log('Ping')
     });
+  }, 30000);
+  wss.on('close', function close() {
+    clearInterval(interval);
   });
 }

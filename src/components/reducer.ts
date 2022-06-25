@@ -1,10 +1,10 @@
 import robot from 'robotjs'
+import {drawCircle} from "./draw";
 
 export const commander = async (action: string, payload:string[]):Promise<void | string> => {
   const { x, y } = robot.getMousePos();
   const coords = payload.map(payload => !!Number(payload) ? Number(payload) : 0);
 
-  console.log('Data');
   console.log('------------');
   console.log('action', action);
   console.log('x', x);
@@ -24,6 +24,8 @@ export const commander = async (action: string, payload:string[]):Promise<void |
       return robot.moveMouse(x + coords[0], y);
     case 'mouse_position':
       return `${x},${y}`;
+    case 'draw_circle':
+      return drawCircle(x, y, coords[0])
   }
 
 
