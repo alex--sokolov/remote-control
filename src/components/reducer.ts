@@ -1,5 +1,5 @@
 import robot from 'robotjs'
-import {drawCircle} from "./draw";
+import {drawCircle, drawRectangle} from "./draw";
 
 export const commander = async (action: string, payload:string[]):Promise<void | string> => {
   const { x, y } = robot.getMousePos();
@@ -25,9 +25,8 @@ export const commander = async (action: string, payload:string[]):Promise<void |
     case 'mouse_position':
       return `${x},${y}`;
     case 'draw_circle':
-      return drawCircle(x, y, coords[0])
+      return drawCircle(x, y, coords[0]);
+    case 'draw_rectangle':
+      return drawRectangle(x, y, coords[0], coords[1]);
   }
-
-
-
 }
