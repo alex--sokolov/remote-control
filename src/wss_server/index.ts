@@ -2,6 +2,7 @@ import {createWebSocketStream, WebSocket, WebSocketServer} from "ws";
 import {ExtWebSocket} from "../interfaces";
 import {Duplex} from 'stream';
 import {getData} from "../utils/getData";
+import {commander} from "../components/reducer";
 
 export const startWebSocketServer = (port: number) => {
   function heartbeat(wss: ExtWebSocket) {
@@ -30,10 +31,15 @@ export const startWebSocketServer = (port: number) => {
 
     myStream.on('readable', async () => {
       const data = await getData(myStream);
-      console.log('Data');
-      console.log('------------');
-      console.log(data);
-      console.log('------------');
+      const [action, ...payload] = data.split(' ');
+
+      const result = await commander(action, payload);
+      console.log('-------');
+      console.log('Result');
+      console.log('-------');
+      console.log(result);
+      console.log('-------');
+      myStream.write(`${action} ${result}\0`)
     });
 
     const interval = setInterval(() => {
@@ -47,7 +53,6 @@ export const startWebSocketServer = (port: number) => {
         console.log('Ping')
       });
     }, 30000);
-
     wss.on('close', function close() {
       clearInterval(interval);
     });

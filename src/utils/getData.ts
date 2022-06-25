@@ -1,6 +1,6 @@
 import {Duplex} from "stream";
 
-export const getData = async (stream: Duplex) => {
+export const getData = async (stream: Duplex): Promise<string> => {
   let data = '';
 
   try {
