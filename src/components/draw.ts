@@ -1,13 +1,30 @@
-import robot, { mouseToggle } from 'robotjs';
+import robot, { getScreenSize, mouseToggle } from 'robotjs';
+
+const screenHeight = getScreenSize().height;
+const screenWidth = getScreenSize().width;
 
 export const drawCircle = (curX: number, curY: number, radius: number): void => {
-  mouseToggle('down');
-  for (let i = 0; i <= Math.PI * 2; i += 0.05) {
-    // Convert polar coordinates to cartesian
-    const x = curX - radius * Math.cos(i) + radius;
-    const y = curY - radius * Math.sin(i);
-    robot.dragMouse(x, y);
+  if (curY - radius < 0) {
+    curY = radius;
+  } else if (curY + radius > screenHeight) {
+    curY = screenHeight - radius;
   }
+  robot.moveMouse(curX, curY);
+  mouseToggle('down');
+  if (curX + radius * 2 > screenWidth) {
+    for (let i = 0; i >= -Math.PI * 2; i -= 0.05) {
+      const x = curX + radius * Math.cos(i) - radius;
+      const y = curY - radius * Math.sin(i);
+      robot.dragMouse(x, y);
+    }
+  } else {
+    for (let i = 0; i <= Math.PI * 2; i += 0.05) {
+      const x = curX - radius * Math.cos(i) + radius;
+      const y = curY - radius * Math.sin(i);
+      robot.dragMouse(x, y);
+    }
+  }
+  robot.moveMouse(curX, curY);
   mouseToggle('up');
 };
 
@@ -25,9 +42,30 @@ export const drawLine = (curX: number, curY: number, x: number, y: number): void
 
 export const drawRectangle = (curX: number, curY: number, x: number, y: number): void => {
   mouseToggle('down');
-  drawLine(curX, curY, x, 0);
-  drawLine(curX + x, curY, 0, y);
-  drawLine(curX + x, curY + y, -x, 0);
-  drawLine(curX, curY + y, 0, -y);
+  if (curX + x > screenWidth) {
+    if (curY + y > screenHeight) {
+      drawLine(curX, curY, -x, 0);
+      drawLine(curX - x, curY, 0, -y);
+      drawLine(curX - x, curY - y, x, 0);
+      drawLine(curX, curY - y, 0, y);
+    } else {
+      drawLine(curX, curY, -x, 0);
+      drawLine(curX - x, curY, 0, y);
+      drawLine(curX - x, curY + y, x, 0);
+      drawLine(curX, curY + y, 0, -y);
+    }
+  } else {
+    if (curY + y > screenHeight) {
+      drawLine(curX, curY, x, 0);
+      drawLine(curX + x, curY, 0, -y);
+      drawLine(curX + x, curY - y, -x, 0);
+      drawLine(curX, curY - y, 0, y);
+    } else {
+      drawLine(curX, curY, x, 0);
+      drawLine(curX + x, curY, 0, y);
+      drawLine(curX + x, curY + y, -x, 0);
+      drawLine(curX, curY + y, 0, -y);
+    }
+  }
   mouseToggle('up');
 };

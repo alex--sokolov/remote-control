@@ -12,16 +12,6 @@ export const startWebSocketServer = (port: number) => {
 
   const wss = new WebSocketServer({ port: port });
   wss.on('connection', function connection(ws: ExtWebSocket): void {
-    ws.on('message', function message(data) {
-      console.log('received:', data.toString());
-    });
-
-    ws.send('server_started', (err) => {
-      if (err) {
-        console.error(`Smth went wrong. Error: ${err.message}`);
-      }
-    });
-
     ws.isAlive = true;
     ws.on('pong', () => {
       heartbeat(ws);
@@ -31,15 +21,15 @@ export const startWebSocketServer = (port: number) => {
       encoding: 'utf8',
       decodeStrings: false,
     });
+
+    myStream.write('server_started');
+
     myStream.on('readable', async () => {
       const data = await getData(myStream);
+      console.log('received:', data);
       const [action, ...payload] = data.split(' ');
 
       const result = await commander(action, payload);
-      console.log('Result');
-      console.log('-------');
-      console.log(result);
-      console.log('-------');
       myStream.write(`${action} ${result}\0`);
     });
 
