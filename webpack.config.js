@@ -1,6 +1,6 @@
 const path = require("path");
 const ESLintPlugin = require("eslint-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const webpack = require('webpack');
 const dotenv = require('dotenv')
 dotenv.config();
@@ -16,26 +16,26 @@ module.exports = {
         test: /\.ts$/,
         use: "ts-loader",
         exclude: /node_modules/
+      },
+      {
+        test: /\.node$/,
+        use: "node-loader",
       }
     ]
   },
   plugins: [
-    new ESLintPlugin({ extensions: ["ts"] }),
+    new ESLintPlugin({extensions: ["ts"]}),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(process.env)
     }),
-    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false })
+    new CleanWebpackPlugin({cleanStaleWebpackAssets: false})
   ],
   resolve: {
-    extensions: [".ts"],
-    fallback: {
-      "dotenv": false,
-      "http": false,
-      "path": false,
-      "fs": false,
-      "os": false,
-      "process": false
-    }
+    extensions: [".js", ".ts"],
+  },
+  externals: {
+    bufferutil: "bufferutil",
+    "utf-8-validate": "utf-8-validate",
   },
   output: {
     filename: "index.js",
