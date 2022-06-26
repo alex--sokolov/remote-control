@@ -1,4 +1,4 @@
-import {Duplex} from "stream";
+import { Duplex } from 'stream';
 
 export const getData = async (stream: Duplex): Promise<string> => {
   let data = '';
@@ -10,7 +10,7 @@ export const getData = async (stream: Duplex): Promise<string> => {
     }
   } catch (err) {
     if (err instanceof Error) {
-      console.error(`There is an error while reading from front: ${err.message}`)
+      console.error(`There is an error while reading from front: ${err.message}`);
     }
   }
 

@@ -1,14 +1,13 @@
-import robot from 'robotjs'
-import {drawCircle, drawRectangle} from "./draw";
-import {prntScrn} from "./prntScrn";
+import robot from 'robotjs';
+import { drawCircle, drawRectangle } from './draw';
+import { prntScrn } from './prntScrn';
 
 const PRINTSCREEN_WIDTH = 100;
 const PRINTSCREEN_HEIGHT = 100;
 
-
-export const commander = async (action: string, payload:string[]):Promise<void | string> => {
+export const commander = async (action: string, payload: string[]): Promise<void | string> => {
   const { x, y } = robot.getMousePos();
-  const coords = payload.map(payload => !!Number(payload) ? Number(payload) : 0);
+  const coords = payload.map((payloadItem) => (!Number(payloadItem) ? 0 : Number(payloadItem)));
 
   console.log('------------');
   console.log('action', action);
@@ -38,4 +37,4 @@ export const commander = async (action: string, payload:string[]):Promise<void |
     case 'prnt_scrn':
       return prntScrn(x, y, PRINTSCREEN_WIDTH, PRINTSCREEN_HEIGHT);
   }
-}
+};

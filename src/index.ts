@@ -1,5 +1,5 @@
 import { httpServer } from './http_server';
-import {startWebSocketServer} from "./wss_server";
+import { startWebSocketServer } from './wss_server';
 
 const HTTP_PORT = process.env.HTTP_PORT || 4000;
 const WSS_PORT = Number(process.env.WSS_PORT) || 8080;

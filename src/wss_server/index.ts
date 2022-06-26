@@ -1,8 +1,8 @@
-import {createWebSocketStream, WebSocket, WebSocketServer} from "ws";
-import {ExtWebSocket} from "../interfaces";
-import {Duplex} from 'stream';
-import {getData} from "../utils/getData";
-import {commander} from "../components/reducer";
+import { createWebSocketStream, WebSocket, WebSocketServer } from 'ws';
+import { ExtWebSocket } from '../interfaces';
+import { Duplex } from 'stream';
+import { getData } from '../utils/getData';
+import { commander } from '../components/reducer';
 
 export const startWebSocketServer = (port: number) => {
   function heartbeat(wss: ExtWebSocket) {
@@ -10,15 +10,15 @@ export const startWebSocketServer = (port: number) => {
     console.log('Pong');
   }
 
-  const wss = new WebSocketServer({port: port});
+  const wss = new WebSocketServer({ port: port });
   wss.on('connection', function connection(ws: ExtWebSocket): void {
     ws.on('message', function message(data) {
       console.log('received:', data.toString());
     });
 
     ws.send('server_started', (err) => {
-      if (err){
-        console.error(`Smth went wrong. Error: ${err.message}`)
+      if (err) {
+        console.error(`Smth went wrong. Error: ${err.message}`);
       }
     });
 
@@ -27,12 +27,10 @@ export const startWebSocketServer = (port: number) => {
       heartbeat(ws);
     });
 
-    const myStream: Duplex = createWebSocketStream(ws,
-      {
-        encoding: 'utf8',
-        decodeStrings: false,
-      });
-
+    const myStream: Duplex = createWebSocketStream(ws, {
+      encoding: 'utf8',
+      decodeStrings: false,
+    });
     myStream.on('readable', async () => {
       const data = await getData(myStream);
       const [action, ...payload] = data.split(' ');
@@ -42,13 +40,12 @@ export const startWebSocketServer = (port: number) => {
       console.log('-------');
       console.log(result);
       console.log('-------');
-      myStream.write(`${action} ${result}\0`)
+      myStream.write(`${action} ${result}\0`);
     });
 
     ws.on('close', () => {
-      myStream.destroy()
-    })
-
+      myStream.destroy();
+    });
   });
   const interval = setInterval(() => {
     wss.clients.forEach((ws: WebSocket) => {
@@ -58,10 +55,10 @@ export const startWebSocketServer = (port: number) => {
 
       extWs.isAlive = false;
       ws.ping(null, undefined);
-      console.log('Ping')
+      console.log('Ping');
     });
   }, 30000);
   wss.on('close', function close() {
     clearInterval(interval);
   });
-}
+};
