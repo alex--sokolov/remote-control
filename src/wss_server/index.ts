@@ -22,7 +22,7 @@ export const startWebSocketServer = (port: number) => {
       decodeStrings: false,
     });
 
-    myStream.write('server_started\0');
+    myStream.write('server_started \0');
 
     myStream.on('readable', async () => {
       const data = await getData(myStream);
